@@ -4,25 +4,24 @@ def main():
     with open('words_alpha.txt', 'r') as file:
         word_list = file.read().split()
 
-    with open('letters.txt', 'r') as file:
-        letter_list = file.read().split()
+    print('Enter the letters from your puzzle, separated by spaces:')
+    letter_list = input().split()
 
-    with open('solution_words.txt', 'w') as solutions_file:
-        solution_count = 0
-        for word in word_list:
-            if not (letter_list[0] in word):
-                continue
-            elif (len(word) < 4):
-                continue
+    solution_words = []
+    for word in word_list:
+        if not (letter_list[0] in word):
+            continue
+        elif (len(word) < 4):
+            continue
 
-            for i, letter in enumerate(word):
-                if not (letter in letter_list):
-                    break
-                if (i == len(word) - 1):
-                    solutions_file.write(word + '\n')
-                    solution_count += 1
+        for i, letter in enumerate(word):
+            if not (letter in letter_list):
+                break
+            if (i == len(word) - 1):
+                solution_words.append(word)
 
-        print(str(solution_count) + " words found in word list.")
+    print(str(len(solution_words)) + " words found in word list:")
+    print(solution_words)
 
 
 if __name__ == '__main__':
