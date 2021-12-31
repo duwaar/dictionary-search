@@ -1,4 +1,4 @@
-import wx
+import wx, os
 import dictionary_search_gui as gui
 
 
@@ -30,6 +30,9 @@ def main():
 class MyFrame(gui.SearchFrame):
     def __init__(self, *args, **kwds):
         gui.SearchFrame.__init__(self, *args, **kwds)
+
+        self.dictionaries = os.listdir('dictionaries')
+        print(self.dictionaries)
 
     def on_search_button_pressed(self):
         print('No function implemented for "on_search_button_pressed"')
