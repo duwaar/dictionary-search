@@ -1,2 +1,4 @@
 **env
 **~
+*.wxg
+**__pycache__
