@@ -27,19 +27,52 @@ def main():
     print(solution_words)
 '''
 
+
+
 class MyFrame(gui.SearchFrame):
     def __init__(self, *args, **kwds):
         gui.SearchFrame.__init__(self, *args, **kwds)
+        self.dictionary_selector.Set(os.listdir('dictionaries'))
+        self.dictionary_selector.SetSelection(0)
 
-        self.dictionaries = os.listdir('dictionaries')
-        print(self.dictionaries)
+    def all_A_in_B(self, A, B):
+        set_A = set(A)
+        set_B = set(B)
+        elements_in_common = set_A.intersection(set_B)
+        return len(elements_in_common) == len(set_A)
+
+    def remove_markers(self, word):
+        while (not word.isalpha() and len(word) > 0):
+            word = word[:-1]
+        return word
 
     def on_search_button_pressed(self):
-        print('No function implemented for "on_search_button_pressed"')
+        required_letters = self.required_letter_selector.GetCheckedStrings()
+        source_letters = self.source_letter_selector.GetCheckedStrings()
+        dictionary_selected = self.dictionary_selector.GetStringSelection()
+        dictionary_path = os.path.join(os.sep,
+                os.getcwd(),
+                'dictionaries',
+                dictionary_selected
+                )
+        with open(dictionary_path) as file:
+            word_list = file.read().split()
+
+        solution_words = ''
+        for word in word_list:
+            word = self.remove_markers(word)
+            if (self.all_A_in_B(required_letters, word)
+                    and self.all_A_in_B(word, source_letters)
+                    ):
+                solution_words = solution_words + word + '\n'
+        
+        self.found_words_box.SetValue(solution_words)
+
+
 
 class DictionarySearchApp(wx.App):
     def OnInit(self):
-        self.frame = MyFrame(None, wx.ID_ANY, "")
+        self.frame = MyFrame(None, wx.ID_ANY, '')
         self.SetTopWindow(self.frame)
         self.frame.Show()
         return True
