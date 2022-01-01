@@ -35,6 +35,9 @@ class MyFrame(gui.SearchFrame):
         self.dictionary_selector.Set(os.listdir('dictionaries'))
         self.dictionary_selector.SetSelection(0)
 
+        with open('README.md', 'r') as file:
+            self.help_box.SetValue(file.read())
+
     def all_A_in_B(self, A, B):
         set_A = set(A)
         set_B = set(B)
@@ -48,25 +51,28 @@ class MyFrame(gui.SearchFrame):
 
     def on_search_button_pressed(self):
         required_letters = self.required_letter_selector.GetCheckedStrings()
+
         source_letters = self.source_letter_selector.GetCheckedStrings()
-        dictionary_selected = self.dictionary_selector.GetStringSelection()
+        for letter in required_letters:
+            source_letters.append(letter)
+
         dictionary_path = os.path.join(os.sep,
                 os.getcwd(),
                 'dictionaries',
-                dictionary_selected
+                self.dictionary_selector.GetStringSelection()
                 )
         with open(dictionary_path) as file:
             word_list = file.read().split()
 
-        solution_words = ''
+        found_words = ''
         for word in word_list:
             word = self.remove_markers(word)
             if (self.all_A_in_B(required_letters, word)
                     and self.all_A_in_B(word, source_letters)
                     ):
-                solution_words = solution_words + word + '\n'
+                found_words = found_words + word + '\n'
         
-        self.found_words_box.SetValue(solution_words)
+        self.found_words_box.SetValue(found_words)
 
 
 
