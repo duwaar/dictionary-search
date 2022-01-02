@@ -44,18 +44,23 @@ class MyFrame(gui.SearchFrame):
         elements_in_common = set_A.intersection(set_B)
         return len(elements_in_common) == len(set_A)
 
-    def remove_markers(self, word):
-        while (not word.isalpha() and len(word) > 0):
-            word = word[:-1]
-        return word
+    def strip_word(self, word):
+        stripped_word = word.strip()
+        if (stripped_word.isalpha()):
+            return stripped_word
+        else:
+            clean_word = ''
+            for character in stripped_word:
+                if (character.isalpha()):
+                    clean_word = clean_word + character
+            return clean_word
 
     def on_search_button_pressed(self):
         required_letters = self.required_letter_selector.GetCheckedStrings()
 
         source_letters = self.source_letter_selector.GetCheckedStrings()
-        for letter in required_letters:
-            source_letters.append(letter)
 
+        # This should be refactored into a load_dictionary() function, or something.
         dictionary_path = os.path.join(os.sep,
                 os.getcwd(),
                 'dictionaries',
@@ -64,15 +69,26 @@ class MyFrame(gui.SearchFrame):
         with open(dictionary_path) as file:
             word_list = file.read().split()
 
-        found_words = ''
+        # This should be refactored into a find_words() function, or something.
+        found_words = []
         for word in word_list:
-            word = self.remove_markers(word)
-            if (self.all_A_in_B(required_letters, word)
-                    and self.all_A_in_B(word, source_letters)
+            # Cleaning the words should be done earlier--when the word list is loaded.
+            clean_word = self.strip_word(word)
+            if (not clean_word):
+                continue
+            # Dear God. I hope this if-statement can be made cleaner.
+            if (self.all_A_in_B(required_letters, clean_word)
+                    and (self.all_A_in_B(clean_word, source_letters)
+                    or self.all_A_in_B(clean_word, required_letters))
                     ):
-                found_words = found_words + word + '\n'
+                found_words.append(clean_word)
         
-        self.found_words_box.SetValue(found_words)
+        found_words_string = ''
+        for word in found_words:
+            found_words_string += word + '\n'
+        self.found_words_box.SetValue(found_words_string)
+        self.word_count_box.SetValue(str(len(found_words)))
+
 
 
 
