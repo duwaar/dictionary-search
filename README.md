@@ -8,5 +8,4 @@
 The results will appear in the "Found words" box.
 
 ## To Do
-- Display a count of the found words.
 - Add a check/uncheck all box in each letter selection control.
